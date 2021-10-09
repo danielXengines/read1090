@@ -383,7 +383,7 @@ void CD1090::print2file(void){
         std::ofstream file;
         file.open(CurrStatFile, std::ofstream::out | std::ofstream::trunc);
         std::string dataStr = "";
-        dataStr.append("COLOR, FLIGHT, HEX, LATITUDE, LONGITUDE, ALTITUDE(ft), BEARING, SEEN\n");
+        dataStr.append("FLIGHT, HEX, LATITUDE, LONGITUDE, ALTITUDE(ft), BEARING, SEEN\n");
 
         // std::cout << "COLOR, FLIGHT, HEX, LAT, LON, ALT, BRNG, SEEN, AIRCRAFT, AIRLINE\n" << std::endl;
         // noLines ++;
