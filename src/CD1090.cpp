@@ -190,7 +190,7 @@ void CD1090::JSONblock2Vector(void){
 		            rx_bcast.lonTrk.push_back((float)it["lon"]);
 		            rx_bcast.altTrk.push_back(it["altitude"]);
 	                flight_vector.push_back(rx_bcast);
-	                alid_idx++;
+	                valid_idx++;
 	            }
             }
         }
@@ -377,7 +377,7 @@ void CD1090::print2screen(void){
 void CD1090::print2file(void){
     if (dataReady) {
         // uint noLines = 0;
-        // uint clrIdx  = 0;
+        uint clrIdx  = 0;
         //int localClear_time = (int)clearTime.elapsed();
         //if (((localClear_time  % 1) == 0) && (localClear_time > 0)) {
 	    //clearTime.reset();                         // reset the total time
