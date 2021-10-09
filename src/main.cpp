@@ -47,19 +47,27 @@ int main(int argc, char **argv)
     while (dProc.runLoop) {
 
         dProc.acquireJSONblock();                              // acquire JSON data from server
-	dProc.JSONblock2Vector();                              // convert JSON block to vector struct
-	dProc.runTracker();                                    // run the tracker, also saves tracks to data directory
-	dProc.broadcastData();                                 // broadcast data over UDP
-	//dProc.broadcastTOL();
-	dProc.print2screen();                                  // print tracked results to screen
+	    dProc.JSONblock2Vector();                              // convert JSON block to vector struct
+	    dProc.runTracker();                                    // run the tracker, also saves tracks to data directory
+	    dProc.broadcastData();                                 // broadcast data over UDP
+	    //dProc.broadcastTOL();
+	    dProc.print2screen();                                  // print tracked results to screen
 
-	// update flight stats data set every 15 mins
-	now = time(0);
-	ltm = localtime(&now);
-	if ((ltm->tm_min % 15 == 0 ) && (ltm->tm_sec > 58)) {
-		fs.consol_last(p);
-		sleep(2);
-	}
+    
+	    // update flight stats data set every 15 mins
+	    now = time(0);
+	    ltm = localtime(&now);
+	    
+        /* todo : test & move this process into a thread */
+        if ((ltm->tm_min % 15 == 0 ) && (ltm->tm_sec > 58)) {
+		    fs.consol_last(p);
+		    sleep(2);
+	    }
+        
+        /* todo : test & move this process into a thread */
+        if (ltm->tm_sec % 30 == 0 ) {
+		    dProc.print2file();
+	    }
 
     }
   return 0;
