@@ -426,7 +426,7 @@ void CD1090::print2file(void){
             dataStr.append(", ");
             dataStr.append(std::to_string(it->seen));
             dataStr.append(", ");
-            dataStr.append(it->typeAC.substr (0,7) );
+            dataStr.append(it->typeAC);
             dataStr.append(", ");
             dataStr.append(it->airline);
             dataStr.append("\n");
@@ -588,7 +588,7 @@ void CD1090::buildICAO(void) {
     Timer tmr;                                                      // initialize timer object
     while(in.read_row(col0,col1,col2,col3,col4)){
             //trim(col2);                                           // trim whitespace before and after
-	    //trim(col3);
+	    trim(col3);
 	    //trim(col4);
 	    d.hexcode = col0;
             d.tailNum = col1;
