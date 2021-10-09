@@ -406,7 +406,7 @@ void CD1090::print2file(void){
             dataStr.append(", ");
             dataStr.append(std::to_string(it->lon));
             dataStr.append(", ");
-            dataStr.append(std::to_string(it->alt));
+            dataStr.append(std::to_string(it->altitude));
             dataStr.append(", ");
             dataStr.append(std::to_string(it->bearing));
             dataStr.append(", ");
