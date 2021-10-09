@@ -433,7 +433,7 @@ void CD1090::print2file(void){
         }
         file.close();
 	    const std::string file_dest = "/var/www/flightStats/FlightData.csv";
-        copy_file(CurrStatFile, file_dest, copy_option::overwrite_if_exists);
+        boost::filesystem::copy_file(CurrStatFile, file_dest, boost::filesystem::copy_option::overwrite_if_exists);
 
 	    // std::cout << "\033[" << clrIdx << "m" << it->flight << "\t" << it->hexcode << "\t" 
 		//       << std::setprecision(5) <<  it->lat << "\t" << std::setprecision(5) << it->lon 
