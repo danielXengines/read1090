@@ -65,7 +65,7 @@ int main(int argc, char **argv)
 	    }
         
         /* todo : test & move this process into a thread */
-        if (ltm->tm_sec % 30 == 0 ) {
+        if (ltm->tm_sec % 10 == 0 ) {
 		    dProc.print2file();
 	    }
 
