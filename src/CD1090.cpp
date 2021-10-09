@@ -543,7 +543,7 @@ void CD1090::broadcastTOL(void) {
 
 // returns the aircraft type and operator as a string vector
 std::vector<std::string> CD1090::findByHEX(std::string hexRef){
-    std::vector<std::string> dummyStr(24,' ');
+    std::vector<std::string> dummyStr (24,' ');
     std::vector<CD1090::icao>::iterator it = std::find_if (icao_vector.begin (), icao_vector.end (),
                                      boost::bind ( &icao::hexcode, _1 ) == hexRef );
     if (it != icao_vector.end()) {
