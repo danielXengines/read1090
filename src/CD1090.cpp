@@ -429,9 +429,10 @@ void CD1090::print2file(void){
             dataStr.append(it->typeAC);
             dataStr.append(", ");
             dataStr.append(it->airline);
-            file << dataStr << std::endl;
-            dataStr.erase(dataStr.begin(), dataStr.end());
+            
         }
+        file << dataStr << std::endl;
+        dataStr.erase(dataStr.begin(), dataStr.end());
         file.close();
 	    const std::string file_dest = "/var/www/flightStats/FlightData.csv";
         boost::filesystem::copy_file(CurrStatFile, file_dest, boost::filesystem::copy_option::overwrite_if_exists);
