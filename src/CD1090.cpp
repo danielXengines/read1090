@@ -418,7 +418,7 @@ void CD1090::print2file(void){
             dataStr.append("\n");
             
         }
-        file << dataStr << std::endl;
+        file << dataStr;// << std::endl;
         dataStr.erase(dataStr.begin(), dataStr.end());
         file.close();
 	    const std::string file_dest = "/var/www/flightStats/curr_flight_status.csv";
