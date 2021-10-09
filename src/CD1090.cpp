@@ -430,6 +430,7 @@ void CD1090::print2file(void){
             dataStr.append(", ");
             dataStr.append(it->airline);
             file << dataStr << std::endl;
+            dataStr.erase(dataStr.begin(), dataStr.end());
         }
         file.close();
 	    const std::string file_dest = "/var/www/flightStats/FlightData.csv";
