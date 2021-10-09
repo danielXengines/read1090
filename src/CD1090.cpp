@@ -374,32 +374,16 @@ void CD1090::print2screen(void){
 }
 
 // function to print data to csv file
+/* todo : issue with typeAC and airline strings. Appear to contain symbols, unclear where it comes from */
 void CD1090::print2file(void){
     if (dataReady) {
         // uint noLines = 0;
         uint clrIdx  = 0;
-        //int localClear_time = (int)clearTime.elapsed();
-        //if (((localClear_time  % 1) == 0) && (localClear_time > 0)) {
-	    //clearTime.reset();                         // reset the total time
-	    //std::cout << "\033[2J" << std::endl;       // clear screen
-        //}
-        //std::string fps = std::to_string(1/frameTime.elapsed());
-
-        //fps.resize(4); 
-        // print the results out on screen
-        //std::cout << "FPS: " <<  std::setw(4) << std::setfill('0') << fps << std::endl;
-        // noLines ++;
-	    // if (noIter > 0) noIter --;                                  // counter is only decrement count if input value is positive
-	    // only print remaining iterations when finite
-	    // if (noIter > 0) {
-        //     std::cout << "Remaining iterations: " <<  std::setw(7) << std::setfill('0') 
-	    //       << std::to_string(noIter) << std::endl;
-	    //     noLines ++;
-	    // }
+    
         std::ofstream file;
         file.open(CurrStatFile, std::ofstream::out | std::ofstream::trunc);
         std::string dataStr = "";
-        dataStr.append("COLOR, FLIGHT, HEX, LAT, LON, ALT, BRNG, SEEN, AIRCRAFT, AIRLINE\n");
+        dataStr.append("COLOR, FLIGHT, HEX, LAT, LON, ALT, BRNG, SEEN\n");
 
         // std::cout << "COLOR, FLIGHT, HEX, LAT, LON, ALT, BRNG, SEEN, AIRCRAFT, AIRLINE\n" << std::endl;
         // noLines ++;
@@ -425,10 +409,10 @@ void CD1090::print2file(void){
             dataStr.append(std::to_string(it->bearing));
             dataStr.append(", ");
             dataStr.append(std::to_string(it->seen));
-            dataStr.append(", ");
-            dataStr.append(it->typeAC);
-            dataStr.append(", ");
-            dataStr.append(it->airline);
+            //dataStr.append(", ");
+            //dataStr.append(it->typeAC);
+            //dataStr.append(", ");
+            //dataStr.append(it->airline);
             dataStr.append("\n");
             
         }
@@ -437,17 +421,6 @@ void CD1090::print2file(void){
         file.close();
 	    const std::string file_dest = "/var/www/flightStats/curr_flight_status.csv";
         boost::filesystem::copy_file(CurrStatFile, file_dest, boost::filesystem::copy_option::overwrite_if_exists);
-
-	    // std::cout << "\033[" << clrIdx << "m" << it->flight << "\t" << it->hexcode << "\t" 
-		//       << std::setprecision(5) <<  it->lat << "\t" << std::setprecision(5) << it->lon 
-		//       << "\t" << std::setw(5) << std::right << it->altitude << " "
-		//       << "\t" << std::setw(3) << std::right << it->bearing 
-		//       << "\t" << std::setw(3) << std::right << it->seen 
-	    //           << "\t" << it->typeAC << "\t\t" << it->airline <<"\033[0m" << std::endl;
-        //     noLines++;
-        // }
-        // noLines++;
-        // std::cout << "\033[" << noLines << "A" << std::endl;
     }
 }
 
@@ -543,7 +516,7 @@ void CD1090::broadcastTOL(void) {
 
 // returns the aircraft type and operator as a string vector
 std::vector<std::string> CD1090::findByHEX(std::string hexRef){
-    std::vector<std::string> dummyStr {"x"};
+    std::vector<std::string> dummyStr;
     std::vector<CD1090::icao>::iterator it = std::find_if (icao_vector.begin (), icao_vector.end (),
                                      boost::bind ( &icao::hexcode, _1 ) == hexRef );
     if (it != icao_vector.end()) {
@@ -587,8 +560,8 @@ void CD1090::buildICAO(void) {
     
     Timer tmr;                                                      // initialize timer object
     while(in.read_row(col0,col1,col2,col3,col4)){
-            //trim(col2);                                           // trim whitespace before and after
-	    trim(col3);
+        //trim(col2);                                           // trim whitespace before and after
+	    //trim(col3);
 	    //trim(col4);
 	    d.hexcode = col0;
             d.tailNum = col1;
