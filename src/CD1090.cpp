@@ -155,7 +155,7 @@ void CD1090::sort_by_score(void){
 void CD1090::JSONblock2Vector(void){
     if (dataReady) {
         try {
-	    CD1090::ADSB_brcast rx_bcast;           // struct to sort data from each json entry
+	        CD1090::ADSB_brcast rx_bcast;           // struct to sort data from each json entry
             auto jX = json::parse(READBuffer);      // json stream with all entries
             auto noRX_bcast = jX.size();            // total number of broadcasts received
             uint valid_idx = 0;                     // number of entries with position broadcast
@@ -164,40 +164,40 @@ void CD1090::JSONblock2Vector(void){
             flight_vector.clear();                  // clear the vector
             // iterate over message block to parse individual messages
             for (auto it: jX) {
-	        // results are pruned to save broadcasts with valid positions
-	        if (it["lat"] > 0){
-	            // Check if flight name is contained in broadcast
-	            std::string tempStr = it["flight"];
-	            uint lenDelta = 9 - tempStr.length();   // Determine the difference in length, 9Char max
-	            if (lenDelta > 6){
-	                rx_bcast.flight = "xxxxxxxxx";
-	            } else {
-		        tempStr.insert(tempStr.length(), "        ", lenDelta);
-	                rx_bcast.flight = tempStr;
+	            // results are pruned to save broadcasts with valid positions
+	            if (it["lat"] > 0){
+	                // Check if flight name is contained in broadcast
+	                std::string tempStr = it["flight"];
+	                uint lenDelta = 9 - tempStr.length();   // Determine the difference in length, 9Char max
+	                if (lenDelta > 6){
+	                    rx_bcast.flight = "xxxxxxxxx";
+	                } else {
+		                tempStr.insert(tempStr.length(), "        ", lenDelta);
+	                    rx_bcast.flight = tempStr;
+	                }
+		            rx_bcast.altitude = it["altitude"];
+	                rx_bcast.hexcode = it["hex"];
+	                rx_bcast.lat = (float)it["lat"];
+	                rx_bcast.lon = (float)it["lon"];
+	                rx_bcast.messages = it["messages"];
+	                rx_bcast.seen = it["seen"];
+	                rx_bcast.squawk = it["squawk"];
+	                rx_bcast.bearing = it["track"];
+	                rx_bcast.validposition = it["validposition"];
+	                rx_bcast.validtrack = it["validtrack"];
+	                rx_bcast.vert_rate = it["vert_rate"];
+		            rx_bcast.latTrk.push_back((float)it["lat"]);
+		            rx_bcast.lonTrk.push_back((float)it["lon"]);
+		            rx_bcast.altTrk.push_back(it["altitude"]);
+	                flight_vector.push_back(rx_bcast);
+	                alid_idx++;
 	            }
-		    rx_bcast.altitude = it["altitude"];
-	            rx_bcast.hexcode = it["hex"];
-	            rx_bcast.lat = (float)it["lat"];
-	            rx_bcast.lon = (float)it["lon"];
-	            rx_bcast.messages = it["messages"];
-	            rx_bcast.seen = it["seen"];
-	            rx_bcast.squawk = it["squawk"];
-	            rx_bcast.bearing = it["track"];
-	            rx_bcast.validposition = it["validposition"];
-	            rx_bcast.validtrack = it["validtrack"];
-	            rx_bcast.vert_rate = it["vert_rate"];
-		    rx_bcast.latTrk.push_back((float)it["lat"]);
-		    rx_bcast.lonTrk.push_back((float)it["lon"]);
-		    rx_bcast.altTrk.push_back(it["altitude"]);
-	            flight_vector.push_back(rx_bcast);
-	            valid_idx++;
-	        }
-           }
+            }
         }
         catch (json::parse_error& e) {
-	    logFile(e.what());           // record parse error in log file
-	    dataReady = false;
-	}
+	        logFile(e.what());           // record parse error in log file
+	        dataReady = false;
+	    }
     }
 }
 
@@ -370,6 +370,81 @@ void CD1090::print2screen(void){
         }
         noLines++;
         std::cout << "\033[" << noLines << "A" << std::endl;
+    }
+}
+
+// function to print data to csv file
+void CD1090::print2file(void){
+    if (dataReady) {
+        // uint noLines = 0;
+        // uint clrIdx  = 0;
+        //int localClear_time = (int)clearTime.elapsed();
+        //if (((localClear_time  % 1) == 0) && (localClear_time > 0)) {
+	    //clearTime.reset();                         // reset the total time
+	    //std::cout << "\033[2J" << std::endl;       // clear screen
+        //}
+        //std::string fps = std::to_string(1/frameTime.elapsed());
+
+        //fps.resize(4); 
+        // print the results out on screen
+        //std::cout << "FPS: " <<  std::setw(4) << std::setfill('0') << fps << std::endl;
+        // noLines ++;
+	    // if (noIter > 0) noIter --;                                  // counter is only decrement count if input value is positive
+	    // only print remaining iterations when finite
+	    // if (noIter > 0) {
+        //     std::cout << "Remaining iterations: " <<  std::setw(7) << std::setfill('0') 
+	    //       << std::to_string(noIter) << std::endl;
+	    //     noLines ++;
+	    // }
+        std::ofstream file;
+        file.open(CurrStatFile, std::ofstream::out | std::ofstream::out);
+        std::string dataStr = "";
+        dataStr.append("COLOR, FLIGHT, HEX, LAT, LON, ALT, BRNG, SEEN, AIRCRAFT, AIRLINE\n");
+
+        // std::cout << "COLOR, FLIGHT, HEX, LAT, LON, ALT, BRNG, SEEN, AIRCRAFT, AIRLINE\n" << std::endl;
+        // noLines ++;
+        // Add data to string buffer
+        for (std::vector<CD1090::ADSB_brcast>::iterator it = track_vector.begin(); it != track_vector.end(); ++it){
+            if (it->seen > 45){
+	        clrIdx = 90;
+	        } else if ((it->seen <=45) && (it->seen > 30)){
+	            clrIdx = 33;
+	        } else {
+	            clrIdx = 0;
+	        }
+            dataStr.append(std::to_string(clrIdx));
+            dataStr.append(", ");
+            dataStr.append(it->flight);
+            dataStr.append(", ");
+            dataStr.append(it->hexcode);
+            dataStr.append(", ");
+            dataStr.append(std::to_string(it->lat));
+            dataStr.append(", ");
+            dataStr.append(std::to_string(it->lon));
+            dataStr.append(", ");
+            dataStr.append(std::to_string(it->bearing));
+            dataStr.append(", ");
+            dataStr.append(std::to_string(it->seen));
+            dataStr.append(", ");
+            dataStr.append(it->typeAC);
+            dataStr.append(", ");
+            dataStr.append(it->airline);
+            file << dataStr << std::endl;
+        }
+        file.close();
+	    const std::string file_dest = "/var/www/flightStats/FlightData.csv";
+        copy_file(CurrStatFile, file_dest, copy_option::overwrite_if_exists);
+
+	    // std::cout << "\033[" << clrIdx << "m" << it->flight << "\t" << it->hexcode << "\t" 
+		//       << std::setprecision(5) <<  it->lat << "\t" << std::setprecision(5) << it->lon 
+		//       << "\t" << std::setw(5) << std::right << it->altitude << " "
+		//       << "\t" << std::setw(3) << std::right << it->bearing 
+		//       << "\t" << std::setw(3) << std::right << it->seen 
+	    //           << "\t" << it->typeAC << "\t\t" << it->airline <<"\033[0m" << std::endl;
+        //     noLines++;
+        // }
+        // noLines++;
+        // std::cout << "\033[" << noLines << "A" << std::endl;
     }
 }
 
