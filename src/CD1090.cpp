@@ -426,7 +426,7 @@ void CD1090::print2file(void){
             dataStr.append(", ");
             dataStr.append(std::to_string(it->seen));
             dataStr.append(", ");
-            dataStr.append(it->typeAC.erase (it->typeAC.begin()+7, it->typeAC.end());
+            dataStr.append(it->typeAC.erase (it->typeAC.begin()+7, it->typeAC.end()));
             dataStr.append(", ");
             dataStr.append(it->airline);
             dataStr.append("\n");
